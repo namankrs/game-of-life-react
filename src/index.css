@@ -24,15 +24,36 @@ code {
   height: 40px;
   width: 40px;
   background-color: black;
+  border-bottom: 2px solid black;
+  border-right: 2px solid black;
 }
 
 .dead-cell {
   height: 40px;
   width: 40px;
-  border: 1px solid black;
+  border-bottom: 2px solid black;
+  border-right: 2px solid black;
 }
 
 .start {
-  width: 50px;
-  height: 30px;
+  position: absolute;
+  top: 30%;
+  left: 70%;
+  width: 15%;
+  height: 10%;
+  font-size: 200%;
+  border: 3px solid black;
+  border-radius: 5%;
+}
+
+.rowContainer {
+  width: 50%;
+}
+
+.instructions {
+  font-size: 150%;
+  position: absolute;
+  text-align: center;
+  right: 5%;
+  width: 40%;
 }

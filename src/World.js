@@ -28,7 +28,7 @@ class World extends React.Component {
   generateDisplay(board = this.cells) {
     const toRender = board.map((row, rowIndex) => {
       return (
-        <div key={rowIndex}>
+        <div key={rowIndex} className="rowContainer">
           {row.map((cell, columnIndex) => {
             let toSetClass = "dead-cell";
             if (cell === "*") {
@@ -46,6 +46,12 @@ class World extends React.Component {
         </div>
       );
     });
+    toRender.unshift(
+      <p class="instructions">
+        Click on the boxes to set them as live and then click the START button
+        below to generate the cycle of life
+      </p>
+    );
     toRender.push(
       <button className="start" onClick={this.iterate.bind(this)}>
         Start
