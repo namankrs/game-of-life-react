@@ -1,24 +1,18 @@
 import React from "react";
-import Cell from "./Cell";
 import "./index.css";
 
 class World extends React.Component {
   constructor(props) {
     super(props);
-    this.cells = this.generateBoard(10, 10);
+    this.cells = this.generateBoard(20, 20);
     this.initialStates = [];
-    this.state = { cells: this.generateBoard(10, 10) };
+    this.state = { cells: this.generateBoard(20, 20) };
   }
-
-  // _initialize() {
-  //   this.cells = new Array(10).fill(new Array(10).fill(new Cell()));
-  // }
 
   render() {
-    return this.generateDisplay(
-      initialiseBoard(this.state.cells, this.initialStates)
-    );
+    return this.generateDisplay(this.cells);
   }
+
   handleEvent(event) {
     event.target.className = "alive-cell";
     const id = event.target.id.split("_");
@@ -61,21 +55,24 @@ class World extends React.Component {
   }
 
   iterate() {
-    const initialBoard = initialiseBoard(this.cells, this.initialStates);
-    const newBoard = cycleGenerator(10, 10, initialBoard);
-    console.log(newBoard);
+    let initialBoard = initialiseBoard(this.cells, this.initialStates);
     this.setState(state => {
-      return { cells: newBoard };
+      return { cells: initialBoard };
     });
+
+    setInterval(() => {
+      const newBoard = cycleGenerator(20, 20, initialBoard);
+      this.cells = newBoard;
+      this.setState(state => {
+        return { cells: newBoard };
+      });
+      initialBoard = newBoard;
+    }, 200);
+    // console.log(newBoard);
   }
 }
 
 export default World;
-
-// const generateInitialBoard = function(length, breadth, initialStates) {
-//   let board = generateBoard(length, breadth);
-//   return initialiseBoard(board, initialStates);
-// };
 
 const initialiseBoard = function(board, initialStates) {
   let grid = board.slice("");
@@ -111,7 +108,6 @@ const getLifeCount = function(board, validNeighbours) {
   const isNeighbourValid = function(neighbour) {
     return board[neighbour[0]][neighbour[1]] == "*";
   };
-
   let lifeBoard = validNeighbours.filter(isNeighbourValid);
   return lifeBoard.length;
 };
@@ -157,12 +153,3 @@ const cycleGenerator = function(length, breadth, board) {
   }
   return currentBoard;
 };
-
-// const generateInstances = function(length, breadth, initialStates) {
-//   let board = generateBoard(length, breadth);
-//   board = initialiseBoard(board, initialStates);
-//   let resultBoard = board.map(x => x.slice());
-
-//   resultBoard = cycleGenerator(length, breadth, resultBoard);
-//   return resultBoard;
-// };
