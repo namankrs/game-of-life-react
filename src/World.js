@@ -2,60 +2,80 @@ import React from "react";
 import Cell from "./Cell";
 import "./index.css";
 
-class World {
-  constructor() {
-    this.cells = generateBoard(10, 10);
+class World extends React.Component {
+  constructor(props) {
+    super(props);
+    this.cells = this.generateBoard(10, 10);
     this.initialStates = [];
+    this.state = { cells: this.generateBoard(10, 10) };
   }
 
   // _initialize() {
   //   this.cells = new Array(10).fill(new Array(10).fill(new Cell()));
   // }
 
+  render() {
+    return this.generateDisplay(
+      initialiseBoard(this.state.cells, this.initialStates)
+    );
+  }
   handleEvent(event) {
     event.target.className = "alive-cell";
     const id = event.target.id.split("_");
     this.initialStates.push(id);
   }
 
-  generateDisplay() {
-    const toRender = this.cells.map((row, rowIndex) => {
+  generateBoard(length, breadth) {
+    return new Array(breadth)
+      .fill()
+      .map(x => new Array(length).fill().map(x => " "));
+  }
+
+  generateDisplay(board = this.cells) {
+    const toRender = board.map((row, rowIndex) => {
       return (
         <div key={rowIndex}>
-          {row.map((cell, columnIndex) => (
-            <button
-              onClick={this.handleEvent.bind(this)}
-              className="dead-cell"
-              key={rowIndex + "_" + columnIndex}
-              id={rowIndex + "_" + columnIndex}
-            />
-          ))}
+          {row.map((cell, columnIndex) => {
+            let toSetClass = "dead-cell";
+            if (cell === "*") {
+              toSetClass = "alive-cell";
+            }
+            return (
+              <button
+                onClick={this.handleEvent.bind(this)}
+                className={toSetClass}
+                key={rowIndex + "_" + columnIndex}
+                id={rowIndex + "_" + columnIndex}
+              />
+            );
+          })}
         </div>
       );
     });
     toRender.push(
-      <button className="start" onClick={this.startIterations.bind(this)}>
+      <button className="start" onClick={this.iterate.bind(this)}>
         Start
       </button>
     );
     return toRender;
   }
 
-  startIterations() {}
+  iterate() {
+    const initialBoard = initialiseBoard(this.cells, this.initialStates);
+    const newBoard = cycleGenerator(10, 10, initialBoard);
+    console.log(newBoard);
+    this.setState(state => {
+      return { cells: newBoard };
+    });
+  }
 }
 
 export default World;
 
-const generateBoard = function(length, breadth) {
-  return new Array(breadth)
-    .fill()
-    .map(x => new Array(length).fill().map(x => " "));
-};
-
-const generateInitialBoard = function(length, breadth, initialStates) {
-  let board = generateBoard(length, breadth);
-  return initialiseBoard(board, initialStates);
-};
+// const generateInitialBoard = function(length, breadth, initialStates) {
+//   let board = generateBoard(length, breadth);
+//   return initialiseBoard(board, initialStates);
+// };
 
 const initialiseBoard = function(board, initialStates) {
   let grid = board.slice("");
@@ -138,13 +158,11 @@ const cycleGenerator = function(length, breadth, board) {
   return currentBoard;
 };
 
-const generateInstances = function(length, breadth, initialStates) {
-  let board = generateBoard(length, breadth);
-  board = initialiseBoard(board, initialStates);
-  let resultBoard = board.map(x => x.slice());
+// const generateInstances = function(length, breadth, initialStates) {
+//   let board = generateBoard(length, breadth);
+//   board = initialiseBoard(board, initialStates);
+//   let resultBoard = board.map(x => x.slice());
 
-  for (let genCount = 0; genCount < generation; genCount++) {
-    resultBoard = cycleGenerator(length, breadth, resultBoard);
-  }
-  return resultBoard;
-};
+//   resultBoard = cycleGenerator(length, breadth, resultBoard);
+//   return resultBoard;
+// };
